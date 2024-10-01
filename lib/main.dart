@@ -3,7 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_simple_weather_bloc/di/injectable.dart';
-import 'package:flutter_simple_weather_bloc/domain/models/repositories/geo_repository.dart';
+import 'package:flutter_simple_weather_bloc/domain/repositories/geo_repository.dart';
+import 'package:flutter_simple_weather_bloc/domain/repositories/weather_repository.dart';
 import 'package:flutter_simple_weather_bloc/presentation/current_weather_screen.dart';
 import 'package:flutter_simple_weather_bloc/presentation/current_weather_state.dart';
 
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
       home: BlocProvider(
           create: (context) {
             final weatherVm = CurrentWeatherVm(
+                weatherRepository: getIt<WeatherRepository>(),
                 geoRepository: getIt<GeoRepository>())
               ..listenToPermissionChanges(); // Start listening to permission changes
             return weatherVm;

@@ -11,9 +11,3 @@ final GetIt getIt = GetIt.instance;
   asExtension: true, // default
 )
 void configureDependencies() => getIt.init();
-
-@module
-abstract class RegisterModule {
-  @lazySingleton
-  GeolocatorPlatform get geolocator => GeolocatorPlatform.instance;
-}

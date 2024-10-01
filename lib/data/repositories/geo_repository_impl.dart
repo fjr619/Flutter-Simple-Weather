@@ -1,4 +1,4 @@
-import 'package:flutter_simple_weather_bloc/domain/models/repositories/geo_repository.dart';
+import 'package:flutter_simple_weather_bloc/domain/repositories/geo_repository.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:injectable/injectable.dart';
 

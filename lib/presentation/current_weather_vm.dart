@@ -2,17 +2,23 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_simple_weather_bloc/domain/models/repositories/geo_repository.dart';
+import 'package:flutter_simple_weather_bloc/domain/models/network_exception.dart';
+import 'package:flutter_simple_weather_bloc/domain/repositories/geo_repository.dart';
+import 'package:flutter_simple_weather_bloc/domain/repositories/weather_repository.dart';
 import 'package:flutter_simple_weather_bloc/presentation/current_weather_state.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
 class CurrentWeatherVm extends Cubit<CurrentWeatherState> {
   final GeoRepository geoRepository;
+  final WeatherRepository weatherRepository;
+
   StreamSubscription<bool>? _permissionSubscription;
 
-  CurrentWeatherVm({required this.geoRepository})
-      : super(const CurrentWeatherState());
+  CurrentWeatherVm({
+    required this.geoRepository,
+    required this.weatherRepository,
+  }) : super(const CurrentWeatherState());
 
   Future<void> fetchWeatherData() async {
     if (!state.isPermissionGranted) {
@@ -22,12 +28,24 @@ class CurrentWeatherVm extends Cubit<CurrentWeatherState> {
       try {
         emit(state.copyWith(isLoading: true));
         final position = await geoRepository.getCurrentLocation();
-        log('position ${position.altitude} ${position.longitude}');
+        log('position ${position.latitude} ${position.longitude}');
         await Future.delayed(const Duration(seconds: 2));
+        final weather = await weatherRepository.getCurrentWeather(
+          long: position.longitude,
+          lat: position.latitude,
+        );
+        log("weather temp ${weather.main.temp}");
+        emit(state.copyWith(weather: weather));
+      } on NetworkException catch (error) {
+        emit(state.copyWith(errorMessage: error.message));
       } catch (e) {
         emit(state.copyWith(errorMessage: "$e"));
       } finally {
-        emit(state.copyWith(isLoading: false, needRequest: false));
+        log("finally");
+        emit(state.copyWith(
+            isLoading: false,
+            needRequest: false,
+            errorMessage: state.errorMessage));
       }
     }
   }
