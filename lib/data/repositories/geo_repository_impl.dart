@@ -14,30 +14,28 @@ class GeoRepositoryImpl extends GeoRepository {
   }
 
   @override
-  Stream<ServiceStatus> getServiceStatusStream() {
-    return geolocator.getServiceStatusStream();
-  }
-
-  @override
-  Future<LocationPermission> checkPermission() async {
-    return await geolocator.checkPermission();
-  }
-
-  @override
   Stream<bool> getPermissionStatusStream() async* {
     // Emit initial permission status
-    final initialPermission = await checkPermission();
+    final initialPermission = await _checkPermission();
     yield _isPermissionGranted(initialPermission);
 
     // Listen to service status changes and recheck permission
-    await for (final serviceStatus in getServiceStatusStream()) {
+    await for (final serviceStatus in _getServiceStatusStream()) {
       if (serviceStatus == ServiceStatus.enabled) {
-        final permission = await checkPermission();
+        final permission = await _checkPermission();
         yield _isPermissionGranted(permission);
       } else {
         yield false; // Location services are disabled
       }
     }
+  }
+
+  Stream<ServiceStatus> _getServiceStatusStream() {
+    return geolocator.getServiceStatusStream();
+  }
+
+  Future<LocationPermission> _checkPermission() async {
+    return await geolocator.checkPermission();
   }
 
   // Helper method to check if permission is granted
