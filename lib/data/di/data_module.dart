@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:injectable/injectable.dart';
 
@@ -15,23 +16,30 @@ abstract class DataModule {
   Dio provideDio() {
     final dio = Dio()
       ..options = BaseOptions(
-        baseUrl: 'https://api.openweathermap.org/data/2.5/',
+        baseUrl: dotenv.env['BASE_URL'] ?? '',
         connectTimeout: const Duration(minutes: 1),
         receiveTimeout: const Duration(minutes: 1),
       )
-      ..interceptors.add(
-        InterceptorsWrapper(
-          onError: (DioException error, handler) {
-            // Handle different types of errors
-            String errorMessage = handleDioError(error);
-            log('Error occurred: $errorMessage');
+      ..interceptors.add(LogInterceptor(
+        request: true, // Log request details
+        requestHeader: true, // Log headers of requests
+        requestBody: true, // Log request body
+        responseHeader: true, // Log headers of responses
+        responseBody: true, // Log response body
+        error: true, // Log errors
+        logPrint: (obj) => log('$obj'),
+      ))
+      ..interceptors.add(InterceptorsWrapper(
+        onError: (DioException error, handler) {
+          // Handle different types of errors
+          String errorMessage = handleDioError(error);
+          log('Error occurred: $errorMessage');
 
-            // Optionally modify the error before passing it back to the caller
-            error.copyWith(message: errorMessage);
-            return handler.next(error);
-          },
-        ),
-      );
+          // Optionally modify the error before passing it back to the caller
+          error.copyWith(message: errorMessage);
+          return handler.next(error);
+        },
+      ));
 
     return dio;
   }

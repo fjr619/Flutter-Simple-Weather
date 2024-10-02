@@ -10,7 +10,13 @@ class GeoRepositoryImpl extends GeoRepository {
 
   @override
   Future<Position> getCurrentLocation() async {
-    return await geolocator.getCurrentPosition();
+    const LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 100,
+    );
+
+    return await geolocator.getCurrentPosition(
+        locationSettings: locationSettings);
   }
 
   @override

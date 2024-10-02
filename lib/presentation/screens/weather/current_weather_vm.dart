@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_simple_weather_bloc/domain/models/network_exception.dart';
 import 'package:flutter_simple_weather_bloc/domain/repositories/geo_repository.dart';
 import 'package:flutter_simple_weather_bloc/domain/repositories/weather_repository.dart';
-import 'package:flutter_simple_weather_bloc/presentation/current_weather_state.dart';
+import 'package:flutter_simple_weather_bloc/presentation/screens/weather/current_weather_state.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
@@ -34,7 +34,7 @@ class CurrentWeatherVm extends Cubit<CurrentWeatherState> {
           long: position.longitude,
           lat: position.latitude,
         );
-        log("weather temp ${weather.main.temp}");
+        log("weather temp ${weather.main?.temp}");
         emit(state.copyWith(weather: weather));
       } on NetworkException catch (error) {
         emit(state.copyWith(errorMessage: error.message));
@@ -69,6 +69,32 @@ class CurrentWeatherVm extends Cubit<CurrentWeatherState> {
         }
       },
     );
+  }
+
+  String getWeatherAnimation() {
+    final condition = state.weather?.weather?[0].main;
+    log('condition $condition');
+    if (condition == null) {
+      return 'assets/sunny.json';
+    }
+
+    switch (condition.toLowerCase()) {
+      case 'clounds':
+      case 'mist':
+      case 'smoke':
+      case 'haze':
+      case 'dust':
+      case 'fog':
+        return 'assets/cloudy.json';
+      case 'rain':
+      case 'drizzle':
+      case 'shower rain':
+        return 'assets/rainy.json';
+      case 'thunderstorm':
+        return 'assets/thunder.json';
+      default:
+        return 'assets/sunny.json';
+    }
   }
 
   @override

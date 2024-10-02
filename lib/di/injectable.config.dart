@@ -19,7 +19,7 @@ import '../data/repositories/geo_repository_impl.dart' as _i909;
 import '../data/repositories/weather_repository_impl.dart' as _i774;
 import '../domain/repositories/geo_repository.dart' as _i112;
 import '../domain/repositories/weather_repository.dart' as _i98;
-import '../presentation/current_weather_vm.dart' as _i595;
+import '../presentation/screens/weather/current_weather_vm.dart' as _i595;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt

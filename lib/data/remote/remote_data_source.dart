@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_simple_weather_bloc/domain/models/current_weather.dart';
 import 'package:injectable/injectable.dart';
 
@@ -17,7 +18,7 @@ class RemoteDataSource {
       'lon': long,
       // 'exclude': 'minutely,hourly,daily,alerts',
       'units': 'metric',
-      'appid': '2b6fcd74bb0f44c1e324f04ce938693c'
+      'appid': dotenv.env['API_KEY']
     }).then(
       (value) {
         return CurrentWeather.fromMap(value.data);
