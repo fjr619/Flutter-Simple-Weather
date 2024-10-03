@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_simple_weather_bloc/domain/models/failure.dart';
 import 'package:flutter_simple_weather_bloc/domain/models/network_exception.dart';
 import 'package:flutter_simple_weather_bloc/domain/repositories/geo_repository.dart';
 import 'package:flutter_simple_weather_bloc/domain/repositories/weather_repository.dart';
@@ -30,15 +31,23 @@ class CurrentWeatherVm extends Cubit<CurrentWeatherState> {
         final position = await geoRepository.getCurrentLocation();
         log('position ${position.latitude} ${position.longitude}');
         await Future.delayed(const Duration(seconds: 2));
-        final weather = await weatherRepository.getCurrentWeather(
+        final result = await weatherRepository.getCurrentWeather(
           long: position.longitude,
           lat: position.latitude,
         );
-        log("weather temp ${weather.main?.temp}");
-        emit(state.copyWith(
-            weather: weather, isLoading: false, needRequest: false));
-      } on NetworkException catch (error) {
-        emit(state.copyWith(errorMessage: error.message, isLoading: false));
+
+        result.fold(
+          (failure) {
+            if (failure is ServerFailure) {
+              emit(state.copyWith(
+                  errorMessage: failure.errorMessage, isLoading: false));
+            }
+          },
+          (data) {
+            emit(state.copyWith(
+                weather: data, isLoading: false, needRequest: false));
+          },
+        );
       } catch (e) {
         emit(state.copyWith(errorMessage: "$e", isLoading: false));
       }

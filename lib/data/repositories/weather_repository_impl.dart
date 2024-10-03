@@ -1,8 +1,10 @@
 import 'dart:developer';
 
+import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_simple_weather_bloc/data/remote/remote_data_source.dart';
 import 'package:flutter_simple_weather_bloc/domain/models/current_weather.dart';
+import 'package:flutter_simple_weather_bloc/domain/models/failure.dart';
 import 'package:flutter_simple_weather_bloc/domain/models/network_exception.dart';
 import 'package:injectable/injectable.dart';
 
@@ -15,17 +17,14 @@ class WeatherRepositoryImpl extends WeatherRepository {
   WeatherRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<CurrentWeather> getCurrentWeather(
+  Future<Either<Failure, CurrentWeather>> getCurrentWeather(
       {required double long, required double lat}) async {
     try {
       final response =
           await remoteDataSource.fetchWeatherByLocation(lat: lat, long: long);
-      return response;
-    } on DioException catch (error) {
-      throw NetworkException(error.message ?? 'network error');
-    } catch (e) {
-      log("-- e $e");
-      throw NetworkException(e.toString());
+      return Right(response);
+    } on NetworkException catch (error) {
+      return Left(ServerFailure(error.message));
     }
   }
 }

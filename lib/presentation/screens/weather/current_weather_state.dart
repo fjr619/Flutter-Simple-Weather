@@ -1,10 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 import '../../../domain/models/current_weather.dart';
 
 @immutable
-class CurrentWeatherState {
+class CurrentWeatherState extends Equatable {
   final bool isLoading;
   final String? errorMessage;
   final CurrentWeather? weather;
@@ -32,4 +33,13 @@ class CurrentWeatherState {
         isPermissionGranted: isPermissionGranted ?? this.isPermissionGranted,
         needRequest: needRequest ?? this.needRequest);
   }
+
+  @override
+  List<Object?> get props => [
+        isLoading,
+        errorMessage,
+        weather,
+        isPermissionGranted,
+        needRequest,
+      ];
 }
