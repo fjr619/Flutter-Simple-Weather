@@ -35,17 +35,12 @@ class CurrentWeatherVm extends Cubit<CurrentWeatherState> {
           lat: position.latitude,
         );
         log("weather temp ${weather.main?.temp}");
-        emit(state.copyWith(weather: weather));
-      } on NetworkException catch (error) {
-        emit(state.copyWith(errorMessage: error.message));
-      } catch (e) {
-        emit(state.copyWith(errorMessage: "$e"));
-      } finally {
-        log("finally");
         emit(state.copyWith(
-            isLoading: false,
-            needRequest: false,
-            errorMessage: state.errorMessage));
+            weather: weather, isLoading: false, needRequest: false));
+      } on NetworkException catch (error) {
+        emit(state.copyWith(errorMessage: error.message, isLoading: false));
+      } catch (e) {
+        emit(state.copyWith(errorMessage: "$e", isLoading: false));
       }
     }
   }

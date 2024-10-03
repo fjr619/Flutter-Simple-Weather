@@ -29,7 +29,7 @@ String handleDioError(DioException error) {
 // Handle different status codes from the server
 String handleHttpResponseError(Response response) {
   final statusCode = response.statusCode;
-  // final responseData = response.data;
+  final responseData = response.data;
 
   // Handle 401 specifically (or any other status code)
   // if (statusCode == 401) {
@@ -43,7 +43,9 @@ String handleHttpResponseError(Response response) {
 
   switch (statusCode) {
     case 400:
-      return "Bad request. Please check the data you sent.";
+      var serverMessage = (responseData as Map<String, dynamic>?)?['message'] ??
+          'Bad request. Please check the data you sent.';
+      return serverMessage;
     case 401:
       return "Unauthorized access";
     case 403:

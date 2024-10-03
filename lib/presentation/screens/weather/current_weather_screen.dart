@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,8 +51,7 @@ class _WeatherPageState extends State<WeatherPage> with WidgetsBindingObserver {
       body: BlocBuilder<CurrentWeatherVm, CurrentWeatherState>(
         builder: (context, state) {
           return AnimatedSwitcher(
-            duration:
-                const Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 500),
             transitionBuilder: (Widget child, Animation<double> animation) {
               return FadeTransition(opacity: animation, child: child);
             },
@@ -67,6 +64,16 @@ class _WeatherPageState extends State<WeatherPage> with WidgetsBindingObserver {
 
   // Method to build the content depending on the state
   Widget _buildContent(BuildContext context, CurrentWeatherState state) {
+    final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
+      foregroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      minimumSize: const Size(88, 36),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(16)),
+      ),
+    );
+
     if (state.isLoading) {
       return Center(
         child: LottieBuilder.asset(
@@ -76,9 +83,22 @@ class _WeatherPageState extends State<WeatherPage> with WidgetsBindingObserver {
       );
     } else if (state.errorMessage != null) {
       return Center(
-        child: Text(
-          state.errorMessage!,
-          key: const ValueKey('errorMessage'), // Key for the error state
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              state.errorMessage!,
+              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+              key: const ValueKey('errorMessage'), // Key for the error state
+            ),
+            ElevatedButton(
+              style: raisedButtonStyle,
+              onPressed: () {
+                context.read<CurrentWeatherVm>().listenToPermissionChanges();
+              },
+              child: const Text('Retry'),
+            )
+          ],
         ),
       );
     } else if (state.weather != null) {

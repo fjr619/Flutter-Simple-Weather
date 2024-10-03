@@ -15,11 +15,12 @@ import 'package:injectable/injectable.dart' as _i526;
 
 import '../data/di/data_module.dart' as _i748;
 import '../data/remote/remote_data_source.dart' as _i929;
+import '../data/remote/remote_data_source_impl.dart' as _i805;
 import '../data/repositories/geo_repository_impl.dart' as _i909;
 import '../data/repositories/weather_repository_impl.dart' as _i774;
 import '../domain/repositories/geo_repository.dart' as _i112;
 import '../domain/repositories/weather_repository.dart' as _i98;
-import '../presentation/screens/weather/current_weather_vm.dart' as _i595;
+import '../presentation/screens/weather/current_weather_vm.dart' as _i77;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -35,13 +36,13 @@ extension GetItInjectableX on _i174.GetIt {
     final dataModule = _$DataModule();
     gh.lazySingleton<_i699.GeolocatorPlatform>(() => dataModule.geolocator);
     gh.lazySingleton<_i361.Dio>(() => dataModule.provideDio());
-    gh.lazySingleton<_i929.RemoteDataSource>(
-        () => _i929.RemoteDataSource(dio: gh<_i361.Dio>()));
     gh.lazySingleton<_i112.GeoRepository>(
         () => _i909.GeoRepositoryImpl(gh<_i699.GeolocatorPlatform>()));
+    gh.lazySingleton<_i929.RemoteDataSource>(
+        () => _i805.RemoteDataSourceImpl(dio: gh<_i361.Dio>()));
     gh.lazySingleton<_i98.WeatherRepository>(() => _i774.WeatherRepositoryImpl(
         remoteDataSource: gh<_i929.RemoteDataSource>()));
-    gh.factory<_i595.CurrentWeatherVm>(() => _i595.CurrentWeatherVm(
+    gh.factory<_i77.CurrentWeatherVm>(() => _i77.CurrentWeatherVm(
           geoRepository: gh<_i112.GeoRepository>(),
           weatherRepository: gh<_i98.WeatherRepository>(),
         ));

@@ -31,13 +31,8 @@ abstract class DataModule {
       ))
       ..interceptors.add(InterceptorsWrapper(
         onError: (DioException error, handler) {
-          // Handle different types of errors
           String errorMessage = handleDioError(error);
-          log('Error occurred: $errorMessage');
-
-          // Optionally modify the error before passing it back to the caller
-          error.copyWith(message: errorMessage);
-          return handler.next(error);
+          return handler.next(error.copyWith(message: errorMessage));
         },
       ));
 
