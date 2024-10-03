@@ -3,7 +3,6 @@ import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_simple_weather_bloc/domain/models/failure.dart';
-import 'package:flutter_simple_weather_bloc/domain/models/network_exception.dart';
 import 'package:flutter_simple_weather_bloc/domain/repositories/geo_repository.dart';
 import 'package:flutter_simple_weather_bloc/domain/repositories/weather_repository.dart';
 import 'package:flutter_simple_weather_bloc/presentation/screens/weather/current_weather_state.dart';

@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_simple_weather_bloc/data/remote/remote_data_source.dart';
 import 'package:flutter_simple_weather_bloc/domain/models/current_weather.dart';
 import 'package:flutter_simple_weather_bloc/domain/models/failure.dart';
